@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Company {
+  id        String     @id @default(uuid())
+  name      String
+  cnpj      String     @unique
+  createdAt DateTime   @default(now())
+  condos    Condo[]
+  users     User[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  email     String   @unique
+  name      String
+  role      String   @default("ADMIN") // ADMIN, MANAGER, VIEWER
+  createdAt DateTime @default(now())
+}
+
+model Condo {
+  id          String   @id @default(uuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  address     String
+  gasRate     Float    // Valor do m³ em R$
+  fixedFee    Float    // Taxa fixa do condomínio em R$
+  units       Unit[]
+}
+
+model Unit {
+  id          String   @id @default(uuid())
+  condoId     String
+  condo       Condo    @relation(fields: [condoId], references: [id], onDelete: Cascade)
+  block       String
+  unitNumber  String
+  resident    String?
+  readings    Reading[]
+
+  @@unique([condoId, block, unitNumber])
+}
+
+model Reading {
+  id           String   @id @default(uuid())
+  unitId       String
+  unit         Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  previousValue Float
+  currentValue  Float
+  consumption  Float    // currentValue - previousValue
+  totalAmount  Float    // (consumption * gasRate) + fixedFee
+  photoUrl     String?  // Foto do medidor
+  status       String   @default("CONFIRMED") // CONFIRMED, ANOMALY, AUDIT
+  readingDate  DateTime @default(now())
+}
