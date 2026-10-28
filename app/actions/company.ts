@@ -1,6 +1,6 @@
 'use server'
 
-import { prisma } from '../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { revalidatePath } from 'next/cache'
 
 // Função para cadastrar uma nova empresa de gestão de gás
