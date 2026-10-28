@@ -34,7 +34,7 @@ export default function AuthLayout({
 
       {/* Footer */}
       <p className="text-xs text-slate-600 mt-8 text-center z-10">
-        &copy; {new Date().getFullYear()} GasMeter SaaS. Todos os direitos reservados.
+        &copy; 2026 GasMeter SaaS. Todos os direitos reservados.
       </p>
     </div>
   )
